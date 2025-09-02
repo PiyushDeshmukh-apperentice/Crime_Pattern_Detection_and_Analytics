@@ -1,0 +1,5 @@
+# requirements.txt for DAAPBL crime pattern detection
+Flask
+pandas
+matplotlib
+sqlite3
