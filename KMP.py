@@ -1,6 +1,9 @@
 import csv
 
 def computeLPS(pat, M, lps):
+    # handle empty pattern
+    if M == 0:
+        return
     length = 0
     i = 1
     lps[0] = 0
@@ -17,7 +20,11 @@ def computeLPS(pat, M, lps):
                 i += 1
 
 def KMP(pat, s):
+    # both pat and s are expected to be already normalized (lowercase)
     M = len(pat)
+    # empty pattern: treat as match
+    if M == 0:
+        return True
     N = len(s)
     lps = [0] * M
     computeLPS(pat, M, lps)
@@ -41,19 +48,23 @@ def KMP(pat, s):
     return False  # Pattern not found
 
 def filter_csv_by_pattern(input_csv, output_csv, pattern):
-    with open(input_csv, mode='r') as infile, open(output_csv, mode='w', newline='') as outfile:
+    # normalize pattern to lowercase and strip whitespace
+    pattern = (pattern or "").strip().lower()
+    with open(input_csv, mode='r', encoding='utf-8') as infile, open(output_csv, mode='w', newline='', encoding='utf-8') as outfile:
         reader = csv.DictReader(infile)
         fieldnames = reader.fieldnames
         writer = csv.DictWriter(outfile, fieldnames=fieldnames)
 
         writer.writeheader()
         for row in reader:
-            if KMP(pattern, row['Formatted']):
+            formatted = (row.get('Formatted') or "").lower()
+            if KMP(pattern, formatted):
                 writer.writerow(row)
 
 if __name__ == "__main__":
-    input_csv = "/home/piyush/Desktop/Projects/DAA_PBL/synthetic_fir1.csv"
+    input_csv = "/mnt/StorageHDD/Projects/DAA_PBL/synthetic_fir1.csv"
     output_csv = "filtered_fir.csv"
     pattern = input("Enter the pattern to search: ")
+    pattern = (pattern or "").strip().lower()
     filter_csv_by_pattern(input_csv, output_csv, pattern)
     print(f"Filtered rows saved to {output_csv}")
