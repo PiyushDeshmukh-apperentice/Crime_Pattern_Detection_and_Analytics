@@ -44,7 +44,7 @@ If you run into installation errors, check for missing system libraries (for exa
 - `app.py` — Streamlit dashboard that uses the filtered CSV to show KPIs, maps, charts and word clouds.
 - `synthetic_fir.csv`, `synthetic_fir1.csv` — Example synthetic datasets included in the repo.
 - `filtered_fir.csv` — Output file produced by `KMP.py` (created after running pattern filtering).
-- `requirements.txt` — Python dependencies used by the project.
+ - `requirements.txt` — Python dependencies used by the project.
 
 ## Quickstart / Usage
 
@@ -68,14 +68,52 @@ Programmatic usage (from Python):
 from KMP import filter_csv_by_pattern
 filter_csv_by_pattern('synthetic_fir1.csv', 'filtered_fir.csv', 'burglary')
 ```
+ 
+How KMP (Knuth-Morris-Pratt) pattern matching works
+---------------------------------------------------
 
-3) Run the Streamlit dashboard
+KMP is an efficient substring search algorithm that finds occurrences of a "pattern" inside a "text" in O(n + m) time (where n = text length, m = pattern length). The key idea is to avoid re-checking characters in the text that have already been matched against the pattern by precomputing a longest-prefix-suffix (LPS) table for the pattern.
+
+High-level steps:
+
+1. Preprocess the pattern and build the LPS (also called failure) array. For each position i in the pattern, LPS[i] stores the length of the longest proper prefix of pattern[0..i] that is also a suffix of pattern[0..i]. This tells the algorithm how far it can shift the pattern when a mismatch happens without re-scanning matched characters.
+
+2. Scan the text from left to right, simultaneously comparing characters in the pattern. On a match, advance both the text index and pattern index. On a mismatch, consult the LPS array to decide where in the pattern to continue matching; do not move the text index backwards.
+
+3. Continue until the end of the text; report all pattern occurrences found.
+
+Short worked example:
+
+- text: "ABABDABACDABABCABAB"
+- pattern: "ABABCABAB"
+
+Compute the LPS for the pattern (values shown):
+
+- i:   0 1 2 3 4 5 6 7 8
+- P:   A B A B C A B A B
+- LPS: 0 0 1 2 0 1 2 3 4
+
+During search, when a mismatch happens at pattern index j, KMP looks up LPS[j-1] and resumes matching at that pattern index instead of restarting at 0. This avoids re-checking characters that are known to match and gives the algorithm its linear-time behavior.
+
+In this project, `KMP.py` implements this algorithm to perform case-insensitive pattern searches across FIR descriptions and writes matching rows to `filtered_fir.csv`.
+
+3) Run the Streamlit apps
+
+There are two Streamlit apps in this repo. You can run them in separate terminals so they operate on different ports:
+
+- Main analytics dashboard (default port 8501):
 
 ```bash
-streamlit run app.py
+streamlit run app.py --server.port 8501
 ```
 
-The dashboard allows you to run KMP filtering from the UI, or load an existing `filtered_fir.csv` for exploration.
+- FIR registration form (convenient form for officers; use port 8502):
+
+```bash
+streamlit run register_fir_app.py --server.port 8502
+```
+
+The dashboard (`app.py`) allows you to run KMP filtering from the UI, or load an existing `filtered_fir.csv` for exploration. The registration form (`register_fir_app.py`) appends new FIRs directly to `synthetic_fir1.csv`.
 
 4) Text formatting with Gemma API (optional)
 

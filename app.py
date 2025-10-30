@@ -309,17 +309,17 @@ st.plotly_chart(fig_stack_conv, use_container_width=True)
 st.subheader("🔗 Relational Analysis")
 
 # Scatter Plot: Victims vs. Convicts
-fig_scatter = px.scatter(df_filtered, x='Total_Victims', y='Total_Convicts', color=solved_col, 
-                         hover_data=[division_col], title="Victims vs. Convicts (Colored by Solved Status)")
-st.plotly_chart(fig_scatter, use_container_width=True)
+# fig_scatter = px.scatter(df_filtered, x='Total_Victims', y='Total_Convicts', color=solved_col, 
+#                          hover_data=[division_col], title="Victims vs. Convicts (Colored by Solved Status)")
+# st.plotly_chart(fig_scatter, use_container_width=True)
 
 # Correlation Heatmap (Existing)
-num_df = df_filtered.select_dtypes(include=[np.number])
-if not num_df.empty:
-    fig_corr = px.imshow(num_df.corr(), text_auto=True, aspect="auto", title="Numeric Feature Correlation")
-    st.plotly_chart(fig_corr, use_container_width=True)
-else:
-    st.info("No numeric columns found for correlation analysis.")
+# num_df = df_filtered.select_dtypes(include=[np.number])
+# if not num_df.empty:
+#     fig_corr = px.imshow(num_df.corr(), text_auto=True, aspect="auto", title="Numeric Feature Correlation")
+#     st.plotly_chart(fig_corr, use_container_width=True)
+# else:
+#     st.info("No numeric columns found for correlation analysis.")
 
 # --- Top Crimes (Existing, adapted) ---
 if crime_col in df_filtered:
@@ -329,19 +329,19 @@ if crime_col in df_filtered:
     st.plotly_chart(fig_bar, use_container_width=True)
 
 # --- Word Cloud (Existing, enhanced) ---
-st.subheader("🗣️ Keyword Density (Word Cloud)")
-if desc_col in df_filtered:
-    text = " ".join(df_filtered[desc_col].dropna().astype(str))
-    if text.strip():
-        wc = WordCloud(width=800, height=400, background_color="white", stopwords=["sexual", "harassment", "stalking"]).generate(text)  # Enhanced with custom stopwords
-        fig, ax = plt.subplots(figsize=(10,5))
-        ax.imshow(wc, interpolation="bilinear")
-        ax.axis("off")
-        st.pyplot(fig)
-    else:
-        st.info("No descriptive text found.")
-else:
-    st.info("No descriptive column found for word cloud.")
+# st.subheader("🗣️ Keyword Density (Word Cloud)")
+# if desc_col in df_filtered:
+#     text = " ".join(df_filtered[desc_col].dropna().astype(str))
+#     if text.strip():
+#         wc = WordCloud(width=800, height=400, background_color="white", stopwords=["sexual", "harassment", "stalking"]).generate(text)  # Enhanced with custom stopwords
+#         fig, ax = plt.subplots(figsize=(10,5))
+#         ax.imshow(wc, interpolation="bilinear")
+#         ax.axis("off")
+#         st.pyplot(fig)
+#     else:
+#         st.info("No descriptive text found.")
+# else:
+#     st.info("No descriptive column found for word cloud.")
 
 # --- 10. Data Preview & Download ---
 st.subheader("Data Preview")
