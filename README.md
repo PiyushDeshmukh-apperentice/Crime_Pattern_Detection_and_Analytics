@@ -1,4 +1,4 @@
-# Crime Pattern Detection & Analytics (DAA_PBL)
+# Crime Pattern Detection & Analytics 
 
 A small toolkit and demo for detecting and analyzing crime / FIR (First Information Report) patterns.
 It includes tools to generate synthetic FIR data, perform fast substring searches using the KMP algorithm,
